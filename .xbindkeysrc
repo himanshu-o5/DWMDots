@@ -1,0 +1,26 @@
+# Add keybindings here
+
+
+# Increase Brightness
+"brightnessctl -d amdgpu_bl2 s +20"
+XF86MonBrightnessUp
+
+# Decrease Brightness
+"brightnessctl -d amdgpu_bl2 s 20-"
+XF86MonBrightnessDown
+
+# Increase volume
+"pamixer -i 10"
+   XF86AudioRaiseVolume
+
+# Decrease volume
+"pamixer -d 10"
+   XF86AudioLowerVolume
+
+# Mute volume
+"pamixer -t"
+   XF86AudioMute
+
+# Mute microphone
+"pactl set-source-mute @DEFAULT_SOURCE@ toggle"
+   XF86AudioMicMute

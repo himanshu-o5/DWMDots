@@ -1,0 +1,81 @@
+#!/usr/bin/bash
+#curl -sf "wttr.in/Nizhniy_Novgorod?format=1" | sed -r 's/^.{4}//' | tee "$HOME/.local/share/weatherreport" || exit 1 ; #this exit will only work if tee (or before my changes, sed with output redirection) returns anything other than zero, if curl ends with an error this exit will not be called
+
+case $BLOCK_BUTTON in
+	1) "$TERMINAL" -e sh -c "curl -sf 'wttr.in/Uppsala'; zsh" ;;
+	2) rofi -theme "~/.config/rofi/themes/gruvbox/gruvbox-dark.rasi" -e "Weather clicked 2" ;;
+	3) pkill -RTMIN+5 dwmblocks ;;
+	4) rofi -theme "~/.config/rofi/themes/gruvbox/gruvbox-dark.rasi" -e "Weather clicked 4" ;;
+	5) rofi -theme "~/.config/rofi/themes/gruvbox/gruvbox-dark.rasi" -e "Weather clicked 5" ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+WIFI_NAME=$(iwgetid -r | tr '[:upper:]' '[:lower:]')
+
+CITY="Stockholm" # Default
+
+# Determine the city based on WiFi SSID (not really accurate but hey...)
+# Not needed with the gustavsberg -> stockholm replacement below...
+if [[ "$WIFI_NAME" == *"nätet"* || "$WIFI_NAME" == *"telia"* ]]; then
+    CITY="Stockholm"
+else
+    data=$(curl -s https://ipinfo.io/json)
+    CITY=$(echo "$data" | jq -r '.city')
+fi
+
+if [[ "${CITY,,}" == "gustavsberg" ]]; then
+    CITY="Stockholm"
+fi
+#echo "CITY: $CITY"
+
+#WEATHER_REPORT=$(curl -sf --max-time 2 "wttr.in/Uppsala?format=1" | sed -r 's/^.{3}//;s/^ *//g;s/C//g')
+WEATHER_REPORT=$(curl -sf --max-time 2 "wttr.in/${CITY}?format=1" | sed -r 's/^.{3}//;s/^ *//g;s/C//g')
+
+validate_weather() {
+    local weather="$1"
+    if [[ "$weather" =~ [0-9] ]] && [[ ${#weather} -le 10 ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+if validate_weather "$WEATHER_REPORT"; then
+    #echo "$WEATHER_REPORT"
+    #echo "$WEATHER_REPORT" > "$HOME/.local/share/weatherreport"
+    echo "$WEATHER_REPORT" | tee "$HOME/.local/share/weatherreport"
+    #echo "$CITY $WEATHER_REPORT" | tee "$HOME/.local/share/weatherreport"
+else
+    #echo "USING FALLBACK"
+    #FALLBACK_OUTPUT=$(python ~/.local/bin/statusbar/weather_py.py)
+    #echo "$FALLBACK_OUTPUT" > "$HOME/.local/share/weatherreport"
+    #echo "$FALLBACK_OUTPUT"
+    #python ~/.local/bin/statusbar/weather_py.py "$CITY" | tee "$HOME/.local/share/weatherreport"
+    FALLBACK_OUTPUT=$(python ~/.local/bin/statusbar/weather_py.py "$CITY")
+    if validate_weather "$FALLBACK_OUTPUT"; then
+        echo "$FALLBACK_OUTPUT" | tee "$HOME/.local/share/weatherreport"
+        #echo "$CITY $FALLBACK_OUTPUT" | tee "$HOME/.local/share/weatherreport"
+    else
+        cat "$HOME/.local/share/weatherreport"
+    fi
+fi
+
+# old code (kept for reference)
+
+# STR=$(curl -sf "wttr.in/Uppsala?format=1" | sed -r 's/^.{4}//')
+# #STR=$(curl -sf "wttr.in/Uppsala" | grep -Eo -m 1 '(\+|\-)[0-9]+' | head -1)
+# SUB='location'
+# if [[ "$STR" == *"$SUB"* ]]; then
+# 	#echo " -1"
+# 	sudo cat ~/.local/share/weatherreport
+# else
+# 	#curl -sf "wttr.in/Uppsala" | grep -Eo -m 1 '(\+|\-|[0-9])[0-9]+' | head -1 | tee "$HOME/.local/share/weatherreport"
+# 
+# 	curl -sf "wttr.in/Uppsala?format=1" | sed -r 's/^.{3}//;s/^ *//g;s/C//g' | tee "$HOME/.local/share/weatherreport"
+# 	# curl -sf "wttr.in/Uppsala?format=1" | sed -r 's/^.{4}//;s/^ *//g;s/C//g' | tee "$HOME/.local/share/weatherreport"
+# 	#echo "+20°" | tee "$HOME/.local/share/weatherreport"
+# 
+# 	if [ -z "$STR" ]; then
+# 		python ~/.local/bin/statusbar/weather_py.py | tee "$HOME/.local/share/weatherreport"
+# 	fi
+# fi
