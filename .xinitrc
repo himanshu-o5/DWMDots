@@ -35,7 +35,7 @@ fi
 
 # start yours from here
 
-~/set_wallpaper.sh &
+~/.local/bin/set_wallpaper.sh &
 xcompmgr &
 xbindkeys &
 dwmblocks &

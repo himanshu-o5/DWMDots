@@ -191,3 +191,4 @@ cat << "EOF"
 EOF
 mv "$srcDir"/wallpapers/ "$confDir"/
 cp "$srcDir"/.xbindkeysrc "$srcDir"/.xinitrc ~/
+cp "$srcDir"/set_wallpaper.sh "~/.local/bin/"
