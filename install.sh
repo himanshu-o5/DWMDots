@@ -45,6 +45,9 @@ srcDir=$(dirname "$(realpath "$0")")
 if [ ! -d ~/.config ]; then
     mkdir -p ~/.config
 fi
+if [ ! -d ~/.local/bin ]; then
+    mkdir -p ~/.local/bin
+fi
 
 echo "Source folder : $srcDir"
 echo "Config folder : $confDir"
@@ -69,7 +72,7 @@ cat << "EOF"
 EOF
 
 # Define an array of package names
-packages=("base-devel" "curl" "xorg" "xorg-xinit" "libxft" "libxinerama" "xcompmgr" "ttf-jetbrains-mono" "ttf-font-awesome" "feh" "firefox" "python-pywal" "zsh" "zsh-syntax-highlighting" "xdotools" "xbindkeys" "vim" "neovim")
+packages=("base-devel" "curl" "xorg" "xorg-xinit" "libxft" "libxinerama" "xcompmgr" "ttf-jetbrains-mono" "ttf-font-awesome" "feh" "firefox" "python-pywal" "zsh" "zsh-syntax-highlighting" "xdotool" "xbindkeys" "vim" "neovim" "jq" "brightnessctl" "pamixer" "wireless_tools")
 missing_packages=()
 
 # Check each package and add missing ones to missing_packages
@@ -160,28 +163,6 @@ give_space
 
 
 
-
-
-cat << "EOF"
-
-#----------------------------------#
-#     Configuring ZSH terminal     #
-#----------------------------------#
-
-EOF
-
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-cp ./.zshrc ./.zprofile ~/
-give_space
-
-
-
-
-
-
-
-
-
 cat << "EOF"
 
 #----------------------------------#
@@ -191,4 +172,25 @@ cat << "EOF"
 EOF
 mv "$srcDir"/wallpapers/ "$confDir"/
 cp "$srcDir"/.xbindkeysrc "$srcDir"/.xinitrc ~/
-cp "$srcDir"/set_wallpaper.sh "~/.local/bin/"
+cp "$srcDir"/set_wallpaper.sh ~/.local/bin/
+
+
+
+
+
+
+
+
+
+
+
+cat << "EOF"
+
+#----------------------------------#
+#     Configuring ZSH terminal     #
+#----------------------------------#
+
+EOF
+$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) > ohmyzsh.sh
+./ohmyzsh.sh
+cp ./.zshrc ./.zprofile ~/
