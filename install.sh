@@ -166,31 +166,9 @@ give_space
 cat << "EOF"
 
 #----------------------------------#
-#            Last Steps            #
-#----------------------------------#
-
-EOF
-mv "$srcDir"/wallpapers/ "$confDir"/
-cp "$srcDir"/.xbindkeysrc "$srcDir"/.xinitrc ~/
-cp "$srcDir"/set_wallpaper.sh ~/.local/bin/
-
-
-
-
-
-
-
-
-
-
-
-cat << "EOF"
-
-#----------------------------------#
 #     Configuring ZSH terminal     #
 #----------------------------------#
 
 EOF
 $(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) > ohmyzsh.sh
 ./ohmyzsh.sh
-cp ./.zshrc ./.zprofile ~/
